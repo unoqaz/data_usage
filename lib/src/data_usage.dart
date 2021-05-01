@@ -37,6 +37,8 @@ class DataUsage {
   /// bool withAppIcon // if false `DataUsageModel.appIconBytes` will be null.
   /// bool oldVersion // will be true for Android versions lower than 23 (MARSHMELLOW)
   /// DataUsageType dataUsageType // Toggle between Wifi and Mobile Data Usage
+  /// DateTime startTime // Filter usage, starting from this time.
+  /// DateTime endTime // Filter usage, ending with this time.
   ///
   /// ```
   ///
@@ -58,8 +60,8 @@ class DataUsage {
     bool withAppIcon = false,
     bool oldVersion = false,
     DataUsageType dataUsageType = DataUsageType.mobile,
-    DateTime from,
-    DateTime to,
+    DateTime startTime,
+    DateTime endTime,
   }) async {
     if (Platform.isAndroid) {
       final List<dynamic> dataUsage = await _channel.invokeMethod(
@@ -67,8 +69,8 @@ class DataUsage {
         <String, dynamic>{
           "withAppIcon": withAppIcon,
           "isWifi": dataUsageType == DataUsageType.wifi,
-          "from": from?.millisecondsSinceEpoch ?? 0,
-          "to": to?.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch,
+          "startTime": startTime?.millisecondsSinceEpoch ?? 0,
+          "endTime": endTime?.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch,
         },
       );
       return dataUsage

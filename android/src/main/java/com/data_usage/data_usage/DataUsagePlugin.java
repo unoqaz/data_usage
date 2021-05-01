@@ -119,8 +119,8 @@ public class DataUsagePlugin implements FlutterPlugin, MethodCallHandler, Activi
                         result,
                         (Boolean) Utils.getValueOrDefault(call.argument("withAppIcon"), false),
                         (Boolean) Utils.getValueOrDefault(call.argument("isWifi"), false),
-                        (Long) Utils.getValueOrDefault(call.argument("from"), 0),
-                        (Long) Utils.getValueOrDefault(call.argument("to"), 0)
+                        (Long) Utils.getValueOrDefault(call.argument("startTime"), 0),
+                        (Long) Utils.getValueOrDefault(call.argument("endTime"), 0)
                 );
             } catch (Exception e) {
                 result.error("DATA_USAGE_ERROR", e.getMessage(), e.toString());
@@ -131,7 +131,7 @@ public class DataUsagePlugin implements FlutterPlugin, MethodCallHandler, Activi
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void getDataFromPhone(@NonNull Result result, @NonNull Boolean withIcons, @NonNull Boolean isWifi, @NonNull Long from, @NonNull Long to) {
+    private void getDataFromPhone(@NonNull Result result, @NonNull Boolean withIcons, @NonNull Boolean isWifi, @NonNull Long startTime, @NonNull Long endTime) {
         NetworkStatsManager networkStatsManager = (NetworkStatsManager) context.getSystemService(Context.NETWORK_STATS_SERVICE);
         TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
@@ -142,16 +142,13 @@ public class DataUsagePlugin implements FlutterPlugin, MethodCallHandler, Activi
         ArrayList<HashMap<String, Object>> packagesData = new ArrayList<>();
         List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
-
-//        long fromLong = from;
-//        long toLong = to;
         for (ApplicationInfo _package : packages) {
 
             NetworkStats networkStats;
             if (isWifi) {
-                networkStats = networkStatsManager.queryDetailsForUid(ConnectivityManager.TYPE_WIFI, subscriberId, from, to, _package.uid);
+                networkStats = networkStatsManager.queryDetailsForUid(ConnectivityManager.TYPE_WIFI, subscriberId, startTime, endTime, _package.uid);
             } else {
-                networkStats = networkStatsManager.queryDetailsForUid(ConnectivityManager.TYPE_MOBILE, subscriberId, from, to, _package.uid);
+                networkStats = networkStatsManager.queryDetailsForUid(ConnectivityManager.TYPE_MOBILE, subscriberId, startTime, endTime, _package.uid);
             }
             long rxBytes = 0L;
             long txBytes = 0L;

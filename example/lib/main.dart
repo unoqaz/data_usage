@@ -42,8 +42,8 @@ class _HomeState extends State<Home> {
       dataUsage = await DataUsage.dataUsageAndroid(
           withAppIcon: true,
           dataUsageType: DataUsageType.wifi,
-        from: DateTime(now.year, now.month, 2),
-        to: now
+        startTime: DateTime(now.year, now.month, 2),
+        endTime: now
       );
       totalUsage =
           dataUsage.fold(0, (total, appUsage) => total + appUsage.sent + appUsage.received);
