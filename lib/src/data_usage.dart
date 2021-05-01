@@ -58,6 +58,8 @@ class DataUsage {
     bool withAppIcon = false,
     bool oldVersion = false,
     DataUsageType dataUsageType = DataUsageType.mobile,
+    DateTime from,
+    DateTime to,
   }) async {
     if (Platform.isAndroid) {
       final List<dynamic> dataUsage = await _channel.invokeMethod(
@@ -65,6 +67,8 @@ class DataUsage {
         <String, dynamic>{
           "withAppIcon": withAppIcon,
           "isWifi": dataUsageType == DataUsageType.wifi,
+          "from": from?.millisecondsSinceEpoch ?? 0,
+          "to": to?.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch,
         },
       );
       return dataUsage
